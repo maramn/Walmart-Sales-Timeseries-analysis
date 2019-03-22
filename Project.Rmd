@@ -1,0 +1,788 @@
+---
+title: "Project"
+author: "Nagarjuna sricharan Maram & Shardul Jani"
+date: "6 December 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE , message = FALSE)
+```
+
+```{r}
+#install.packages("tseries")
+library(tseries)
+#install.packages("readxl")
+library(readxl)
+#install.packages("forecast")
+library(forecast)
+#install.packages("ggplot2")
+library(ggplot2)
+#install.packages("tseries")
+library(tseries)
+#install.packages("Metrics")
+library(Metrics)
+#install.packages("TSA")
+library(TSA)
+```
+
+
+$$Department\ 94$$
+
+```{r}
+D94 <- read_excel("C:/Users/Charan/Desktop/Fall 17/Data Mining/Project/D94.xlsx")
+```
+
+```{r}
+D94$Month <- as.Date(D94$Month)
+```
+
+```{r}
+d94 <- D94[,-3]
+```
+
+```{r}
+covariate94 <- D94[1:25,3]
+```
+
+
+```{r}
+d94.train <- d94[1:25,1:2]
+d94.test <- d94[26:33,1:2]
+```
+
+#Arima
+
+#Time series plot
+```{r}
+library(ggplot2)
+ggplot(D94 , aes(Month , Sale)) + geom_line() 
+
+```
+
+
+#Test for stationary
+```{r}
+ adf.test(diff(diff(d94.train$Sale)))
+```
+
+```{r}
+acf(d94.train$Sale)
+```
+
+```{r}
+pacf(d94.train$Sale)
+```
+
+```{r}
+Model94.A <- stats::arima(d94.train$Sale , order = c(3,2,2))
+Model94.A
+```
+
+```{r}
+tsdiag(Model94.A)
+```
+
+```{r}
+predict94.1 <- forecast(Model94.A , n.ahead = 8)
+plot(predict94.1)
+```
+
+```{r}
+rmse(d94.test$Sale, predict94.1$mean)
+```
+
+#ARIMAX
+```{r}
+arimax94.A <- arimax(d94.train$Sale , order =  c(3,2,2) ,xtransf =  covariate)
+predict94.2 <- predict(arimax94.A , n.ahead = 8)
+ rmse(d94.test$Sale , predict94.2$pred)
+
+```
+
+
+
+# Average method
+```{r}
+predict94.3 <- meanf(d94.train$Sale , h =8)
+
+rmse(predict94.3$mean , d94.test$Sale)
+
+```
+
+```{r}
+plot(predict94.3)
+```
+
+
+
+#Naive method
+```{r}
+ predict94.4 <- naive(d94.train$Sale , h =8)
+ rmse(predict94.4$mean , d94.test$Sale)
+```
+
+```{r}
+plot(predict94.4)
+```
+
+
+#Drift method
+```{r}
+predict94.5 <- rwf(d94.train$Sale , h = 8 , drift = TRUE)
+rmse(predict94.5$mean , d94.test$Sale)
+
+
+```
+
+```{r}
+plot(predict94.5)
+```
+
+
+
+
+$$Department\ 92$$
+
+#Load Data
+```{r}
+D92 <- read_excel("C:/Users/Charan/Desktop/Fall 17/Data Mining/Project/D92.xlsx")
+
+```
+
+
+```{r}
+D92$Month <- as.Date(D92$Month)
+```
+
+```{r}
+d92 <- D92[,-3]
+```
+
+```{r}
+covariate92 <- D92[1:25,3]
+```
+
+```{r}
+d92.train <- d92[1:25,1:2]
+d92.test <- d92[26:33,1:2]
+```
+
+
+```{r}
+library(ggplot2)
+ggplot(D92 , aes(Month , Sale)) + geom_line()
+```
+
+#Arima
+
+#Test for stationary
+```{r}
+adf.test(diff(diff(d92.train$Sale)))
+
+```
+
+```{r}
+acf(d92.train$Sale)
+```
+
+```{r}
+pacf(d92.train$Sale)
+```
+
+```{r}
+Model92.A <- stats::arima(d92.train$Sale , order = c(2,2,0))
+Model92.A
+```
+
+```{r}
+tsdiag(Model92.A)
+```
+
+```{r}
+predict92.1 <- forecast(Model92.A , n.ahead = 8)
+plot(predict92.1)
+```
+
+```{r}
+rmse(d92.test$Sale, predict92.1$mean)
+```
+
+#Arimax
+```{r}
+arimax92.A <- arimax(d92.train$Sale , order =  c(2,2,0) ,xtransf =  covariate92)
+predict92.2 <-predict(arimax92.A , n.ahead = 8)
+ rmse(d92.test$Sale , predict92.2$pred)
+```
+
+
+
+#Average 
+```{r}
+predict92.3 <- meanf(d92.train$Sale , h =8)
+
+rmse(predict92.3$mean , d92.test$Sale)
+```
+
+```{r}
+plot(predict92.3)
+
+```
+
+
+#Naive
+```{r}
+ predict92.4 <- naive(d92.train$Sale , h =8)
+ rmse(predict92.4$mean , d92.test$Sale)
+```
+
+```{r}
+plot(predict92.4)
+```
+
+
+#Drift Method
+```{r}
+predict92.5 <- rwf(d92.train$Sale , h = 8 , drift = TRUE)
+rmse(predict92.5$mean , d92.test$Sale)
+```
+
+```{r}
+plot(predict92.5)
+```
+
+$$Department\ 38$$
+
+#Loading dataset 
+```{r}
+D38 <- read_excel("C:/Users/Charan/Desktop/Fall 17/Data Mining/Project/D38.xlsx")
+```
+
+```{r}
+D38$Month <- as.Date(D38$Month)
+```
+
+```{r}
+d38 <- D38[,-3]
+```
+
+```{r}
+covariate38 <- D38[1:25,3]
+```
+
+```{r}
+d38.train <- d38[1:25,1:2]
+d38.test <- d38[26:33,1:2]
+
+```
+
+#Time series plot
+```{r}
+library(ggplot2)
+ggplot(D38 , aes(Month , Sale)) + geom_line() 
+```
+
+#Arima
+
+#Test for stationary
+
+```{r}
+adf.test(d38.train$Sale)
+
+```
+
+# 
+```{r}
+acf(d38.train$Sale)
+
+```
+
+#
+```{r}
+pacf(d38.train$Sale)
+
+```
+
+#
+```{r}
+Model38.A <- stats::arima(d38.train$Sale , order = c(0,0,1))
+Model38.A
+```
+
+#
+```{r}
+tsdiag(Model38.A)
+```
+
+#
+```{r}
+predict38.1 <- forecast(Model38.A , n.ahead  = 8)
+plot(predict38.1)
+
+```
+#
+```{r}
+rmse(d38.test$Sale, predict38.1$mean)
+
+```
+
+#Arimax
+```{r}
+arimax38.A <- arimax(d38.train$Sale , order =  c(0,0,1) ,xtransf =  covariate38)
+predict38.2 <-predict(arimax38.A , n.ahead = 8)
+rmse(d38.test$Sale , predict38.2$pred)
+
+```
+
+#Average method
+```{r}
+predict38.3 <- meanf(d38.train$Sale , h =8)
+
+rmse(predict38.3$mean , d38.test$Sale)
+```
+
+```{r}
+plot(predict38.3)
+```
+
+
+#Naive
+```{r}
+predict38.4 <- naive(d38.train$Sale , h =8)
+ rmse(predict38.4$mean , d38.test$Sale)
+
+```
+
+```{r}
+plot(predict38.4)
+```
+
+#Drift method
+```{r}
+predict38.5 <- rwf(d38.train$Sale , h = 8 , drift = TRUE)
+rmse(predict38.5$mean , d38.test$Sale)
+
+```
+
+```{r}
+plot(predict38.5)
+```
+
+
+$$ Department\ 95$$
+
+```{r}
+
+D95 <- read_excel("C:/Users/Charan/Desktop/Fall 17/Data Mining/Project/D 95.xlsx")
+
+```
+
+```{r}
+D95$Month <- as.Date(D95$Month)
+
+```
+
+
+```{r}
+d95 <- D95[,-3]
+
+```
+
+```{r}
+covariate95 <- D95[1:25,3]
+
+```
+
+```{r}
+d95.train <- d95[1:25,1:2]
+d95.test <- d95[26:33,1:2]
+
+```
+
+
+#time series plot
+
+```{r}
+library(ggplot2)
+ggplot(D95 , aes(Month , Sale)) + geom_line()
+
+```
+
+ 
+
+#Arima
+
+
+#test for stationary
+```{r}
+adf.test(diff(diff((d95.train$Sale))))
+
+```
+
+
+#
+```{r}
+acf(d95.train$Sale)
+```
+
+#
+```{r}
+pacf(d95.train$Sale)
+
+```
+
+
+#
+
+```{r}
+Model95.A <- stats::arima(d95.train$Sale, order = c(0,0,0))
+Model95.A
+
+```
+
+#
+```{r}
+tsdiag(Model95.A)
+
+```
+
+
+#
+```{r}
+predict95.1 <- forecast(Model95.A , n.ahead = 8)
+plot(predict95.1)
+```
+
+
+
+#
+```{r}
+rmse(d95.test$Sale, predict95.1$mean)
+```
+
+
+
+
+
+
+
+#Average Method
+```{r}
+predict95.3 <- meanf(d95.train$Sale , h =8)
+
+rmse(predict95.3$mean , d95.test$Sale)
+```
+
+```{r}
+plot(predict95.3)
+
+```
+
+
+
+#Naive Method
+```{r}
+predict95.4 <- naive(d95.train$Sale , h =8)
+rmse(predict95.4$mean , d95.test$Sale)
+```
+
+```{r}
+plot(predict95.4)
+
+```
+
+
+#Drift Method
+
+```{r}
+predict95.5 <- rwf(d95.train$Sale , h = 8 , drift = TRUE)
+rmse(predict95.5$mean , d95.test$Sale)
+
+```
+
+```{r}
+plot(predict95.5)
+```
+
+
+
+$$Department/ 90$$
+
+# for dept 90
+
+```{r}
+D90 <- read_excel("C:/Users/Charan/Desktop/Fall 17/Data Mining/Project/D 90.xlsx")
+```
+
+```{r}
+D90$Month <- as.Date(D90$Month)
+
+```
+
+```{r}
+d90 <- D90[,-3]
+
+```
+
+```{r}
+covariate90 <- D90[1:25,3]
+
+```
+
+```{r}
+d90.train <- d90[1:25,1:2]
+d90.test <- d90[26:33,1:2]
+```
+
+
+#time series plot
+
+```{r}
+library(ggplot2)
+ggplot(D90 , aes(Month , Sale)) + geom_line() 
+```
+
+#Arima
+
+#test for stationary
+
+```{r}
+adf.test(diff((d90.train$Sale)))
+
+```
+
+
+#
+```{r}
+acf(d90.train$Sale)
+
+```
+
+
+#
+```{r}
+pacf(d90.train$Sale)
+
+```
+
+
+#
+```{r}
+Model90.A <- stats::arima(d90.train$Sale , order = c(0,1,0))
+Model90.A
+```
+
+#
+```{r}
+tsdiag(Model90.A)
+
+```
+
+
+#
+```{r}
+predict90.1 <- forecast(Model90.A , n.ahead = 8)
+plot(predict90.1)
+```
+
+#
+```{r}
+rmse(d90.test$Sale, predict90.1$mean)
+
+```
+
+
+
+
+#Average Method
+```{r}
+predict90.3 <- meanf(d90.train$Sale , h =8)
+
+rmse(predict90.3$mean , d90.test$Sale)
+```
+
+```{r}
+plot(predict90.3)
+
+```
+
+
+#Naive Method
+```{r}
+predict90.4 <- naive(d90.train$Sale , h =8)
+rmse(predict90.4$mean , d90.test$Sale)
+```
+
+```{r}
+plot(predict90.4)
+
+```
+
+
+#Drift Method
+```{r}
+predict90.5 <- rwf(d90.train$Sale , h = 8 , drift = TRUE)
+rmse(predict90.5$mean , d90.test$Sale)
+```
+
+```{r}
+plot(predict90.5)
+
+```
+
+#Based on the above results, we have chosen different forecasting methods for different departments based on the RMSE error.
+
+#Department 94 - Arima 
+#Department 92 - naive
+#Department 38 - Drift
+#Department 95 - Arima
+#Department 90 - naive
+
+
+
+#lets forecast future values of 4 months for the above departments.
+
+#Department 94
+
+```{r}
+adf.test(diff(diff(d94$Sale)))
+```
+
+```{r}
+acf(d94$Sale)
+```
+
+```{r}
+pacf(d94$Sale)
+```
+
+```{r}
+Model1 <- stats::arima(d94$Sale , order = c(2,2,1))
+Model1
+```
+
+```{r}
+tsdiag(Model1)
+```
+
+```{r}
+predict1 <- forecast(Model1 , n.ahead = 4)
+predict1$mean
+```
+
+```{r}
+plot(predict1)
+```
+
+#Department 92
+```{r}
+predict2 <- naive(d92$Sale , h = 4)
+predict2
+```
+
+```{r}
+plot(predict2)
+```
+
+#Department 38
+```{r}
+predict3 <- rwf(d38$Sale , h = 4 , drift = TRUE)
+predict3$mean
+
+```
+
+```{r}
+plot(predict3)
+```
+
+
+#Department 95
+
+```{r}
+adf.test(diff(diff(d95$Sale)))
+```
+
+```{r}
+acf(d95$Sale)
+```
+
+```{r}
+pacf(d95$Sale)
+```
+
+```{r}
+Model4 <- stats::arima(d95$Sale , order = c(0,0,0))
+Model4
+```
+
+```{r}
+tsdiag(Model4)
+```
+
+```{r}
+predict4 <- forecast(Model4 , n.ahead = 4)
+predict4$mean
+```
+
+```{r}
+plot(predict1)
+```
+
+#Department 90
+
+```{r}
+predict5 <- rwf(d90$Sale , h = 4 , drift = TRUE)
+predict5$mean
+
+```
+
+```{r}
+plot(predict5)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
